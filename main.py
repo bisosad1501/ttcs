@@ -6,25 +6,36 @@ from scrape import (
     split_dom_content,
 )
 from parse import parse_with_ollama
+from crawl import crawl_website  # Import hàm crawl
 import requests  
 
+st.set_page_config(page_title="Bisosad Web Scraper & Crawler", page_icon="🔍")
 
-st.set_page_config(page_title="Bisosad Web Scraper", page_icon="🔍")
-
-
-st.title("🔍 Bisosad Web Scraper")
-
+st.title("🔍 Bisosad Web Scraper & Crawler")
 
 st.markdown("""
-### Công cụ thu thập dữ liệu từ các trang web
+### Công cụ thu thập và crawl dữ liệu từ các trang web
 Nhập URL của trang web bạn muốn thu thập dữ liệu và mô tả thông tin cần phân tích.
 """)
-
 
 st.sidebar.header("Tùy chọn")
 url = st.sidebar.text_input("Nhập URL trang web:", placeholder="Ví dụ: https://example.com")
 
-if st.sidebar.button("Thu thập Dữ liệu"):
+if st.sidebar.button("Crawl Website"):
+    st.write("Đang crawl dữ liệu từ trang web...")
+    
+    crawled_data = crawl_website(url)
+
+    if crawled_data:
+        st.success("Dữ liệu đã được crawl thành công!")
+        for i, (content, page_url) in enumerate(crawled_data):
+            with st.expander(f"Nội dung trang {i + 1}"):
+                st.text_area(f"Nội dung trang {i + 1}", content, height=300)
+                st.markdown(f"[Truy cập trang này]({page_url})", unsafe_allow_html=True)  # Thêm liên kết đến trang
+    else:
+        st.warning("Không tìm thấy dữ liệu nào.")
+
+if st.sidebar.button("Scrape Website"):
     st.write("Đang thu thập dữ liệu từ trang web...")
     
     try:
